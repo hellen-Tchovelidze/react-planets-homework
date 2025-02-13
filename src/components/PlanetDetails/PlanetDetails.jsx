@@ -1,35 +1,33 @@
+
+
+
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import data from "../../data.json";
-import bgim from "../../assets/background.png";
 
 function PlanetDetails() {
   const { name } = useParams();
   const [planet, setPlanet] = useState(null);
   const [activeView, setActiveView] = useState("overview");
+ 
 
   useEffect(() => {
     const selectedPlanet = data.find((p) => p.name === name);
-    console.log(selectedPlanet.images);
     if (selectedPlanet) {
       setPlanet(selectedPlanet);
     }
-
-    
   }, [name]);
 
-  if (!planet)
-    return <div className="text-center text-lg font-semibold">Loading...</div>;
+  if (!planet) {
+    return <div className="text-center text-lg font-semibold text-white">Loading...</div>;
+  }
 
   const getContent = () => {
     switch (activeView) {
       case "overview":
         return { text: planet.overview.content, image: planet.images.planet };
       case "internal":
-        return {
-          text: planet.structure.content,
-          image: planet.images.internal,
-        };
+        return { text: planet.structure.content, image: planet.images.internal };
       case "geology":
         return { text: planet.geology.content, image: planet.images.geology };
       default:
@@ -40,93 +38,73 @@ function PlanetDetails() {
   const { text, image } = getContent();
 
   return (
-    <div
-      className="flex flex-col h-[90vh] bg-[#070724] "
-      style={{ backgroundImage: `url(${bgim})` }}
-    >
-    
-      <div className="flex flex-1 items-center justify-around">
+    <div className="flex flex-col items-center text-white p-6">
       
-        <div className="w-1/2 flex justify-center">
-          <img
-            src={image}
-            alt={planet.name}
-            className="w-96 h-96 object-contain"
-          />
+      <div className="flex justify-center gap-4 w-full max-w-md mb-4 md:hidden">
+        {["overview", "internal", "geology"].map((view) => (
+          <button
+            key={view}
+            className={`text-white border-b-2 px-2 py-1 ${activeView === view ? "border-white" : "border-transparent"} text-xs md:text-sm`}
+            onClick={() => setActiveView(view)}
+          >
+            {view === "overview" ? "01 Overview" :
+             view === "internal" ? "02 Internal Structure" :
+             "03 Surface Geology"}
+          </button>
+        ))}
+      </div>
+
+      <div className="flex flex-col md:flex-row md:items-center w-full max-w-5xl">
+        <div className="flex justify-center w-full md:w-1/2">
+          <img src={image} alt={planet.name} className="w-40 h-40 md:w-60 md:h-60 object-contain" />
         </div>
 
-        
-        <div className=" flex flex-col justify-center space-y-6">
-          <h1 className="text-5xl font-bold text-white text-[80px]">{planet.name}</h1>
-          <p className="text-lg leading-relaxed text-white w-[350px] text-[14px]">{text}</p>
+        <div className="flex flex-col text-center md:text-left md:w-1/2 mt-6 md:mt-0">
+          <h1 className="text-3xl md:text-5xl font-bold">{planet.name}</h1>
+          <p className="text-sm md:text-lg leading-relaxed mt-4">{text}</p>
 
-      
-          <a
-            href={planet.overview.source}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 underline"
-          >
+          <a href={planet.overview.source} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline mt-2">
             Source: Wikipedia
           </a>
 
          
-          <div className="flex flex-col space-y-3 mt-4">
-            <button
-              className={`w-[350px] h-[48px]  border-[1px] border-white  transition ${
-                activeView === "overview"
-                  ? "bg-[#419EBB] text-white border-[#419EBB]"
-                  : "border-gray-400  text-white "
-              }`}
-              onClick={() => setActiveView("overview")}
-            >
-             01 Overview
-            </button>
-            <button
-              className={`w-[350px] h-[48px]  border-[1px] text-white  transition ${
-                activeView === "internal"
-                  ? "bg-[#419EBB] text-white border-[#419EBB]"
-                  : "border-gray-400   text-white"
-              }`}
-              onClick={() => setActiveView("internal")}
-            >
-             02 Internal Structure
-            </button>
-            <button
-              className={`w-[350px] h-[48px]  border-[1px] border-white  transition ${
-                activeView === "geology"
-                  ? "bg-[#419EBB] text-white border-[#419EBB]"
-                  : "border-gray-400  text-white"
-              }`}
-              onClick={() => setActiveView("geology")}
-            >
-             03 Surface Geology
-            </button>
+          <div className="hidden md:flex flex-col gap-3 mt-6">
+            {["overview", "internal", "geology"].map((view) => (
+              <button
+                key={view}
+                className={`w-full py-2 border ${activeView === view ? "bg-[#419EBB] border-[#419EBB]" : "border-gray-400"} text-white text-xs md:text-sm`}
+                onClick={() => setActiveView(view)}
+              >
+                {view === "overview" ? "01 Overview" :
+                 view === "internal" ? "02 Internal Structure" :
+                 "03 Surface Geology"}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
     
-      <div className="grid grid-cols-4 gap-4 text-white py-6 px-10 w-full">
-        <div className="flex flex-col items-center border border-gray-500 py-4 px-6">
-          <h3 className="text-sm uppercase text-gray-400">Rotation</h3>
-          <p className="text-2xl font-semibold">{planet.rotation}</p>
-        </div>
-        <div className="flex flex-col items-center border border-gray-500 py-4 px-6">
-          <h3 className="text-sm uppercase text-gray-400">Revolution</h3>
-          <p className="text-2xl font-semibold">{planet.revolution}</p>
-        </div>
-        <div className="flex flex-col items-center border border-gray-500 py-4 px-6">
-          <h3 className="text-sm uppercase text-gray-400">Radius</h3>
-          <p className="text-2xl font-semibold">{planet.radius}</p>
-        </div>
-        <div className="flex flex-col items-center border border-gray-500 py-4 px-6">
-          <h3 className="text-sm uppercase text-gray-400">Temperature</h3>
-          <p className="text-2xl font-semibold">{planet.temperature}</p>
-        </div>
+      <div className="flex flex-col  gap-1.5 md:flex-row md:items-center text-white py-6 w-full max-w-5xl mt-6">
+        {["Rotation", "Revolution", "Radius", "Temperature"].map((key, index) => (
+          <div
+            key={index}
+            className="flex flex-col items-center justify-center border border-gray-500 py-2 px-4 w-full md:w-1/4" 
+            style={{ height: "48px", display: "flex", alignItems: "center", justifyContent: "center" }} 
+          >
+            <h3 className="text-xs md:text-sm uppercase text-gray-400">{key}</h3>
+            <p className="text-xs md:text-lg font-semibold text-center">
+              {planet[key.toLowerCase()]}
+            </p>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
 export default PlanetDetails;
+
+
+
+

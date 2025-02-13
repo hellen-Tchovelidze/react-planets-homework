@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import data from "../../data.json";
+import { FiMenu, FiX } from "react-icons/fi";
 
 function PlanetsList() {
   const [planets, setPlanets] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     setPlanets(data);
@@ -11,20 +13,48 @@ function PlanetsList() {
 
   return (
     <>
-      <div className="flex justify-between items-center p-6 bg-[#070724]">
-        <h1 className=" text-white">THE PLANETS</h1>
-        <nav>
-          <ul className="flex justify-around items-center gap-2 text-white">
+      <div className="flex justify-between items-center p-6 bg-[#070724] relative">
+        <h1 className="text-white text-2xl">THE PLANETS</h1>
+
+        <nav className="hidden md:block">
+          <ul className="flex gap-4 text-white">
             {planets.map((planet) => (
               <li key={planet.name}>
-                <Link to={`/planet/${planet.name}`}>{planet.name}</Link>
+                <Link
+                  to={`/planet/${planet.name}`}
+                  className="hover:text-gray-400"
+                >
+                  {planet.name}
+                </Link>
               </li>
             ))}
           </ul>
         </nav>
+
+        <button
+          className="text-white text-3xl md:hidden"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {isOpen ? <FiX /> : <FiMenu />}
+        </button>
       </div>
 
-      <div className=" w-full h-[1px] bg-white opacity-20"></div>
+      {isOpen && (
+        <div className="absolute top-20 left-0 w-full bg-[#070724] flex flex-col items-center py-4 md:hidden">
+          {planets.map((planet) => (
+            <Link
+              key={planet.name}
+              to={`/planet/${planet.name}`}
+              className="text-white py-2 text-xl"
+              onClick={() => setIsOpen(false)}
+            >
+              {planet.name}
+            </Link>
+          ))}
+        </div>
+      )}
+
+      <div className="w-full h-[1px] bg-white opacity-20"></div>
     </>
   );
 }
