@@ -4,7 +4,7 @@ import bgim from "../../assets/background.png"
 
 function HomePage() {
   return (
-    <div className=" bg-[#070724] h-screen " 
+    <div className=" bg-[#070724] h-[100px] " 
     style={{ backgroundImage: `url(${bgim})` }}
     >
       <PlanetsList />
